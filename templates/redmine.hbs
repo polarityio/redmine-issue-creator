@@ -1,0 +1,75 @@
+<div class="input-container">
+    {{#power-select
+            options=projects
+            selected=project
+            searchEnabled=false
+            placeholder="Project"
+            onchange=(action (mut project)) as |project|}}
+        {{project.name}}
+    {{/power-select}}
+</div>
+
+<div class="input-container">
+{{#power-select
+        options=trackers
+        selected=tracker
+        searchEnabled=false
+        placeholder="Tracker"
+        onchange=(action (mut tracker)) as |tracker|}}
+    {{tracker.name}}
+{{/power-select}}
+</div>
+
+<div class="input-container">
+    {{input value=subject placeholder="Subject" class="form-control"}}
+</div>
+
+<div class="input-container">
+    {{textarea value=description rows=6 placeholder="Description" class="form-control"}}
+</div>
+
+<div class="input-container">
+    {{#power-select
+            options=statuses
+            selected=status
+            searchEnabled=false
+            placeholder="Status"
+            onchange=(action (mut status)) as |status|}}
+        {{status.name}}
+    {{/power-select}}
+</div>
+
+<div class="input-container">
+{{#power-select
+        options=users
+        selected=user
+        searchEnabled=true
+        searchField="fullname"
+        placeholder="Assigned To"
+        onchange=(action (mut user)) as |user|}}
+    {{user.login}} -- {{user.firstname}} {{user.lastname}}
+{{/power-select}}
+</div>
+
+<div class="button-container">
+    <button {{action "createIssue"}} class="btn btn-xs" disabled={{if busy true false}}>
+        {{#if busy}}
+            {{fa-icon "spinner-third" spin=true fixedWidth=true}}
+        {{/if}}
+        Create Issue</button>
+</div>
+
+{{#if error}}
+    <div class="alert alert-danger" role="alert">
+        {{fa-icon "exclamation-triangle" fixedWidth=true}} {{error}}
+    </div>
+{{/if}}
+
+{{#if issue}}
+    <div class="alert alert-info">
+        Created
+        <a href="{{block.userOptions.url}}/issues/{{issue.id}}">
+            {{issue.tracker.name}} #{{issue.id}}: {{issue.subject}} {{fa-icon "external-link-square" class="external-icon" fixedWidth=true}}
+        </a>
+    </div>
+{{/if}}
