@@ -4,6 +4,10 @@
 
 The Polarity - Redmine Issue Creator integration lets you create new issue in Redmine from the overlay window based off an indicator on your screen.  The integration supports creating issues based off of IP addresses, hashes, urls, domains, emails and MAC addresses. To create a new issue, highlight an indicator on your screen and trigger an on-demand search.  This will open the Redmine Issue Creator integration where you will be able to install  
 
+| ![image](images/overlay.png) |
+|---|
+|*Redmine Issue Creator* | 
+
 To learn more about Redmine, please visit the [official website](https://www.redmine.org/).
 
 ## Configuring Redmine
