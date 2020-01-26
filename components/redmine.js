@@ -8,10 +8,10 @@ polarity.export = PolarityComponent.extend({
   error: '',
   subject: '',
   description: '',
-  projects: Ember.computed.alias('block.data.details.projects'),
-  statuses: Ember.computed.alias('block.data.details.statuses'),
-  users: Ember.computed.alias('block.data.details.users'),
-  trackers: Ember.computed.alias('block.data.details.trackers'),
+  projects: Ember.computed.alias('block.data.details.properties.projects'),
+  statuses: Ember.computed.alias('block.data.details.properties.statuses'),
+  users: Ember.computed.alias('block.data.details.properties.users'),
+  trackers: Ember.computed.alias('block.data.details.properties.trackers'),
   issue: null,
   project: null,
   status: null,
@@ -20,6 +20,10 @@ polarity.export = PolarityComponent.extend({
   init: function() {
     this._super(...arguments);
     this.set('description', this.block.entity.value);
+    this.set('project', this.projects[this.block.data.details.defaultProjectIndex]);
+    this.set('tracker', this.trackers[this.block.data.details.defaultTrackerIndex]);
+    this.set('user', this.users[this.block.data.details.defaultAssigneeIndex]);
+    this.set('status', this.statuses[this.block.data.details.defaultStatusIndex]);
   },
   actions: {
     createIssue: function() {

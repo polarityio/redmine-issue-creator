@@ -2,7 +2,8 @@ module.exports = {
   name: 'Redmine Issue Creator',
   acronym: 'RED',
   pdescription: 'Searches issues for supported indicators in the Redmine Project management software',
-  entityTypes: ['ipv4', 'hash', 'domain', 'email'],
+  entityTypes: ['ipv4', 'hash', 'domain', 'email', 'url', 'ipv6', 'mac', 'IPv4CIDR'],
+  onDemandOnly: true,
   logging: { level: 'info' },
   block: {
     component: {
@@ -48,23 +49,60 @@ module.exports = {
       adminOnly: true
     },
     {
-      key: 'apiKey',
-      name: 'Redmine REST APIKey',
+      key: 'adminApiKey',
+      name: 'Redmine Administrator REST API Key',
       description:
-        'The REST API Key used to authenticate to your Redmine instance. If left blank, no authentication will be used when communicating with the specified Redmine instance',
+      'A REST API Key for your Redmine administrator.  This key is used to retrieve user, status, project, and tracker information when the integration first starts.  The Admin API Key is not used for creating issues.  >> Please restart the integration after modifying this option.  This option should be set to "Only admins can view and edit"',
+      default: '',
+      type: 'password',
+      userCanEdit: false,
+      adminOnly: true
+    },
+    {
+      key: 'apiKey',
+      name: 'Redmine User REST API Key',
+      description:
+        'The REST API Key used to authenticate to your Redmine instance.  The user associated with this key will be the creator of the new issue.  This option should be set to "Users can view and edit"',
       default: '',
       type: 'password',
       userCanEdit: true,
       adminOnly: false
+    },
+    {
+      key: 'defaultProject',
+      name: 'Default Project Name',
+      description: 'The default project to create your new issue in.  The project name is case sensitive.',
+      default: '',
+      type: 'text',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
+      key: 'defaultTracker',
+      name: 'Default Tracker Name',
+      description: 'The default tracker type for your new issue (e.g., Bug, Support, Incident).  The tracker name is case sensitive.',
+      default: '',
+      type: 'text',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
+      key: 'defaultStatus',
+      name: 'Default Status Name',
+      description: 'The default status type for your new issue (e.g., New, In Progress, Resolved).  The status name is case sensitive.',
+      default: '',
+      type: 'text',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
+      key: 'defaultAssignee',
+      name: 'Default Assignee Login',
+      description: 'The default assignee for your new issue.  You should specify a user\'s login for this option.  The login value is case sensitive.',
+      default: '',
+      type: 'text',
+      userCanEdit: true,
+      adminOnly: false
     }
-    // {
-    //   key: 'project',
-    //   name: 'Default Project',
-    //   description: 'The name of a single project to search.  If left blank, all projects will be searched.',
-    //   default: '',
-    //   type: 'text',
-    //   userCanEdit: true,
-    //   adminOnly: false
-    // }
   ]
 };

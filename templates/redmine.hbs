@@ -43,7 +43,8 @@
 {{#power-select
         options=users
         selected=user
-        searchEnabled=false
+        searchEnabled=true
+        searchField="fullname"
         placeholder="Assigned To"
         onchange=(action (mut user)) as |user|}}
     {{user.login}} -- {{user.firstname}} {{user.lastname}}
@@ -66,7 +67,7 @@
 
 {{#if issue}}
     <div class="alert alert-info">
-        Created 
+        Created
         <a href="{{block.userOptions.url}}/issues/{{issue.id}}">
             {{issue.tracker.name}} #{{issue.id}}: {{issue.subject}} {{fa-icon "external-link-square" class="external-icon" fixedWidth=true}}
         </a>

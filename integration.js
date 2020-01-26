@@ -55,15 +55,37 @@ function handleRequestError(request) {
           resp: resp,
           detail: 'Error making HTTP request'
         });
-      } else if (resp.statusCode !== expectedStatusCode) {
+      } else if (resp.statusCode === expectedStatusCode) {
+        callback(null, body);
+      } else if (resp.statusCode === 401) {
         callback({
-          detail: `Unexpected status code (${resp.statusCode}) when attempting HTTP request`,
+          detail: `You do not have permission to perform that action`,
+          remediation:
+            'Please confirm you have provided a valid API key and that your account has permissions to query Redmine.',
+          messageType: 'alert-warning',
           body: body,
           expectedStatusCode: expectedStatusCode,
-          statusCode: resp.statusCode
+          statusCode: resp.statusCode,
+          requestOptions
+        });
+      } else if (resp.statusCode === 404) {
+        callback({
+          detail: `Resource could not be found`,
+          remediation: 'Please ensure the project set for your Redmine instance is valid.',
+          body: body,
+          expectedStatusCode: expectedStatusCode,
+          statusCode: resp.statusCode,
+          requestOptions
         });
       } else {
-        callback(null, body);
+        callback({
+          detail: `Unexpected status code (${resp.statusCode}) when attempting HTTP request`,
+          remediation: 'Please ensure your Redmine instance is accessible.',
+          body: body,
+          expectedStatusCode: expectedStatusCode,
+          statusCode: resp.statusCode,
+          requestOptions
+        });
       }
     });
   };
@@ -83,7 +105,19 @@ function initializeData(options, cb) {
         getData('issue_statuses', options, done);
       },
       users: (done) => {
-        getData('users', options, done);
+        getData('users', options, (err, users) => {
+          if (err) {
+            return done(err);
+          }
+          done(
+            null,
+            users.map((user) => {
+              // add this fullname property which is used for searching
+              user.fullname = `${user.login} ${user.firstname} ${user.lastname}`;
+              return user;
+            })
+          );
+        });
       },
       trackers: (done) => {
         getData('trackers', options, done);
@@ -105,9 +139,9 @@ function getData(type, options, cb) {
     uri: `${options.url}/${type}.json`
   };
 
-  if (options.apiKey.length > 0) {
+  if (options.adminApiKey.length > 0) {
     requestOptions.headers = {};
-    requestOptions.headers['X-Redmine-API-Key'] = options.apiKey;
+    requestOptions.headers['X-Redmine-API-Key'] = options.adminApiKey;
   }
 
   requestWithDefaults(requestOptions, 200, (err, body) => {
@@ -123,12 +157,72 @@ function doLookup(entities, options, cb) {
     if (err) {
       return cb(err);
     } else {
+      let defaultProjectIndex = 0;
+      let defaultTrackerIndex = 0;
+      let defaultStatusIndex = 0;
+      let defaultAssigneeIndex = 0;
+
+      if (options.defaultProject.length > 0) {
+        defaultProjectIndex = redmineProperties.projects.findIndex((project) => {
+          return project.name === options.defaultProject.trim();
+        });
+      }
+
+      if (options.defaultTracker.length > 0) {
+        defaultTrackerIndex = redmineProperties.trackers.findIndex((tracker) => {
+          return tracker.name === options.defaultTracker.trim();
+        });
+      }
+
+      if (options.defaultStatus.length > 0) {
+        defaultStatusIndex = redmineProperties.statuses.findIndex((status) => {
+          return status.name === options.defaultStatus.trim();
+        });
+      }
+
+      if (options.defaultAssignee.length > 0) {
+        defaultAssigneeIndex = redmineProperties.users.findIndex((user) => {
+          return user.login === options.defaultAssignee.trim();
+        });
+      }
+
+      if (defaultProjectIndex === -1) {
+        return cb({
+          detail: `Default project name '${options.defaultProject}' was not found.`
+        });
+      }
+
+      if (defaultTrackerIndex === -1) {
+        return cb({
+          detail: `Default tracker name '${options.defaultTracker}' was not found.`
+        });
+      }
+
+      if (defaultStatusIndex === -1) {
+        return cb({
+          detail: `Default status name '${options.defaultStatus}' was not found.`
+        });
+      }
+
+      if (defaultAssigneeIndex === -1) {
+        return cb({
+          detail: `Default assignee login name '${options.defaultAssignee}' was not found.`
+        });
+      }
+
       entities.forEach((entity) => {
         lookupResults.push({
           entity: entity,
+          isVolatile: true,
           data: {
             summary: ['Issue Creator'],
-            details: redmineProperties
+            details: {
+              properties: redmineProperties,
+              defaultProjectIndex: defaultProjectIndex,
+              defaultTrackerIndex: defaultTrackerIndex,
+              defaultStatusIndex: defaultStatusIndex,
+              defaultAssigneeIndex: defaultAssigneeIndex
+            }
           }
         });
       });
@@ -153,7 +247,10 @@ function _createIssue(options, attributes, cb) {
 
   Logger.debug({ requestUpdateOptions }, 'Create Issue');
   requestWithDefaults(requestUpdateOptions, 201, (err, body) => {
-    if (err) return cb(err);
+    if (err) {
+      return cb(err);
+    }
+
     cb(null, body.issue);
   });
 }
@@ -177,6 +274,26 @@ function validateOptions(userOptions, cb) {
     });
   }
 
+  if (
+    typeof userOptions.adminApiKey.value !== 'string' ||
+    (typeof userOptions.adminApiKey.value === 'string' && userOptions.adminApiKey.value.length === 0)
+  ) {
+    errors.push({
+      key: 'adminApiKey',
+      message: 'You must provide your Redmine Admin API Key'
+    });
+  }
+
+  if (
+    typeof userOptions.apiKey.value !== 'string' ||
+    (typeof userOptions.apiKey.value === 'string' && userOptions.apiKey.value.length === 0)
+  ) {
+    errors.push({
+      key: 'apiKey',
+      message: 'You must provide your Redmine User API Key'
+    });
+  }
+
   cb(null, errors);
 }
 
@@ -186,7 +303,7 @@ function onMessage(payload, options, cb) {
       Logger.error(err, 'Error creating issue');
       cb(err);
     } else {
-      Logger.debug({issue}, 'Created Issue');
+      Logger.debug({ issue }, 'Created Issue');
       cb(null, issue);
     }
   });
