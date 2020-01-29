@@ -68,6 +68,15 @@ function handleRequestError(request) {
           statusCode: resp.statusCode,
           requestOptions
         });
+      } else if (resp.statusCode === 403) {
+        callback({
+          detail: `You do not have access to the requested resource.`,
+          remediation: 'Please check your Redmine REST Admin API Key to ensure it has administrator access.',
+          body: body,
+          expectedStatusCode: expectedStatusCode,
+          statusCode: resp.statusCode,
+          requestOptions
+        });
       } else if (resp.statusCode === 404) {
         callback({
           detail: `Resource could not be found`,
