@@ -8,9 +8,7 @@ The integration currently supports custom fields for issues which are of the typ
 
 If you make a change to a custom field in Redmine, you will need to restart the integration for those changes to be picked up.
 
-| ![image](images/overlay.png) |
-|---|
-|*Redmine Issue Creator* | 
+<img src="./images/overlay.png" width="50%">
 
 To learn more about Redmine, please visit the [official website](https://www.redmine.org/).
 
