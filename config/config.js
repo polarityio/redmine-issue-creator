@@ -72,11 +72,11 @@ module.exports = {
     {
       key: 'validProjects',
       name: 'Available Projects',
-      description: 'Comma delimited list of project names that are available to add issues to. Project names are case sensitive. If left blank all available projects will be listed.',
+      description: 'Comma delimited list of project names that are available to add issues to. Project names are case sensitive. If left blank all available projects will be listed.  The integration must be restarted after making changes to this option.  This open must be set to "Only admins can view and edit"',
       default: '',
       type: 'text',
       userCanEdit: false,
-      adminOnly: false
+      adminOnly: true
     },
     {
       key: 'defaultProject',

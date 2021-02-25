@@ -25,8 +25,8 @@ The URL for your Redmine instance to include the schema (i.e., https://) and por
 ### Redmine Administrator REST API Key
 
 A REST API Key for your Redmine administrator. This key is used to retrieve user, status, project, and tracker information when the integration first starts. The Admin API Key is not used for creating issues. 
- 
-> Please restart the integration after modifying this option. 
+
+> The integration must be restarted after making changes to this option.
 
 > This option should be set to "Only admins can view and edit"
 
@@ -40,7 +40,9 @@ The REST API Key used to authenticate to your Redmine instance.  The user associ
 
 Comma delimited list of project names that are available to add issues to. Project names are case-sensitive. If left blank all available projects will be listed.
 
-The integration must be restarted after making changes to this option.
+> The integration must be restarted after making changes to this option.
+ 
+> This option should be set to "Only admins can view and edit"
 
 ### Default Project Name
 
