@@ -264,6 +264,7 @@ function doLookup(entities, options, cb) {
           data: {
             summary: ['Issue Creator'],
             details: {
+              url: options.url,
               properties: redmineProperties,
               defaultProjectIndex: defaultProjectIndex,
               defaultTrackerIndex: defaultTrackerIndex,

@@ -8,6 +8,7 @@ polarity.export = PolarityComponent.extend({
   error: '',
   subject: '',
   description: '',
+  details: Ember.computed.alias('block.data.details'),
   projects: Ember.computed.alias('block.data.details.properties.projects'),
   statuses: Ember.computed.alias('block.data.details.properties.statuses'),
   users: Ember.computed.alias('block.data.details.properties.users'),
@@ -15,7 +16,6 @@ polarity.export = PolarityComponent.extend({
   customFields: Ember.computed.alias('block.data.details.properties.customFields'),
   fieldsShadow: Ember.computed('customFields.[]', 'tracker', function () {
     const selectedTracker = this.get('tracker');
-    const selectedProject = this.get('project');
     let fields = [];
     for (let i = 0; i < this.get('customFields.length'); i++) {
       let customField = this.get('customFields')[i];
@@ -38,7 +38,6 @@ polarity.export = PolarityComponent.extend({
     this._super(...arguments);
     this.set('description', this.block.entity.value);
     this.set('project', this.projects[this.block.data.details.defaultProjectIndex]);
-
     this.set('tracker', this.trackers[this.block.data.details.defaultTrackerIndex]);
     this.set('user', this.users[this.block.data.details.defaultAssigneeIndex]);
     this.set('status', this.statuses[this.block.data.details.defaultStatusIndex]);
