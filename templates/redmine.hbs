@@ -1,75 +1,122 @@
-<div class="input-container">
+<div class="mb-1">
+  <a class="p-action" {{on "click" (action "toggleIssueCreator")}}>
+    {{fa-icon icon="ticket-alt" fixedWidth=true}} {{#if viewIssueCreator}}Collapse{{else}}Expand{{/if}} issue creator
+    {{#if viewIssueCreator}}
+      {{fa-icon icon="chevron-up"}}
+    {{else}}
+      {{fa-icon icon="chevron-down"}}
+    {{/if}}
+  </a>
+</div>
+
+{{#if viewIssueCreator}}
+  <div class="input-container">
+      <label>Project</label>
+      {{#power-select
+              options=projects
+              selected=project
+              searchEnabled=false
+              eventType="click"
+              placeholder="Project"
+              onChange=(action (mut project)) as |project|}}
+          {{project.name}}
+      {{/power-select}}
+  </div>
+
+  <div class="input-container">
+    <label>Tracker</label>
     {{#power-select
-            options=projects
-            selected=project
+            options=trackers
+            selected=tracker
             searchEnabled=false
-            placeholder="Project"
-            onchange=(action (mut project)) as |project|}}
-        {{project.name}}
+            eventType="click"
+            placeholder="Tracker"
+            onChange=(action (mut tracker)) as |tracker|}}
+        {{tracker.name}}
     {{/power-select}}
-</div>
+  </div>
 
-<div class="input-container">
-{{#power-select
-        options=trackers
-        selected=tracker
-        searchEnabled=false
-        placeholder="Tracker"
-        onchange=(action (mut tracker)) as |tracker|}}
-    {{tracker.name}}
-{{/power-select}}
-</div>
-
-<div class="input-container">
+  <div class="input-container">
+    <label>Subject</label>
     {{input value=subject placeholder="Subject" class="form-control"}}
-</div>
+  </div>
 
-<div class="input-container">
+  <div class="input-container">
+    <label>Description</label>
     {{textarea value=description rows=6 placeholder="Description" class="form-control"}}
-</div>
+  </div>
 
-<div class="input-container">
-    {{#power-select
-            options=statuses
-            selected=status
-            searchEnabled=false
-            placeholder="Status"
-            onchange=(action (mut status)) as |status|}}
-        {{status.name}}
-    {{/power-select}}
-</div>
-
-<div class="input-container">
-{{#power-select
-        options=users
-        selected=user
-        searchEnabled=true
-        searchField="fullname"
-        placeholder="Assigned To"
-        onchange=(action (mut user)) as |user|}}
-    {{user.login}} -- {{user.firstname}} {{user.lastname}}
-{{/power-select}}
-</div>
-
-<div class="button-container">
-    <button {{action "createIssue"}} class="btn btn-xs" disabled={{if busy true false}}>
-        {{#if busy}}
-            {{fa-icon "spinner-third" spin=true fixedWidth=true}}
+  {{#each fieldsShadow as | field fieldIndex |}}
+    <div class="input-container">
+      {{#if (eq field.field_format "string")}}
+        <label>{{field.name}}</label>
+        {{#if field.is_required}}
+          <span class="is-required text-muted">*required</span>
         {{/if}}
-        Create Issue</button>
-</div>
-
-{{#if error}}
-    <div class="alert alert-danger" role="alert">
-        {{fa-icon "exclamation-triangle" fixedWidth=true}} {{error}}
+        <input
+          value={{field.value}}
+          placeholder={{field.name}}
+          class="form-control"
+          oninput={{action (pipe (action (mut field.value) value="target.value")(action "validateCustomField" field))}}
+        />
+        {{#if field.validationError}}
+          <small class="form-text text-danger validation-text">
+            {{field.validationError}}
+          </small>
+        {{/if}}
+      {{/if}}
     </div>
-{{/if}}
+  {{/each}}
 
-{{#if issue}}
-    <div class="alert alert-info">
-        Created
-        <a href="{{block.userOptions.url}}/issues/{{issue.id}}">
-            {{issue.tracker.name}} #{{issue.id}}: {{issue.subject}} {{fa-icon "external-link-square" class="external-icon" fixedWidth=true}}
-        </a>
-    </div>
+  <div class="input-container">
+      <label>Status</label>
+      {{#power-select
+              options=statuses
+              selected=status
+              searchEnabled=false
+              placeholder="Status"
+              eventType="click"
+              onChange=(action (mut status)) as |status|}}
+          {{status.name}}
+      {{/power-select}}
+  </div>
+
+  <div class="input-container">
+    <label>Assigned to</label>
+    {{#power-select
+            options=users
+            selected=user
+            searchEnabled=true
+            eventType="click"
+            searchField="fullname"
+            placeholder="Assigned To"
+            onChange=(action (mut user)) as |user|}}
+        {{user.login}} -- {{user.firstname}} {{user.lastname}}
+    {{/power-select}}
+  </div>
+
+  <div class="button-container">
+    <button class="btn btn-polarity filter-btn"{{action "createIssue"}} disabled={{if busy true false}}>
+      {{#if busy}}
+        {{fa-icon icon="spinner-third" spin=true}}
+      {{else}}
+        Create Issue
+      {{/if}}
+    </button>
+  </div>
+
+  {{#if error}}
+      <div class="alert alert-danger" role="alert">
+          {{fa-icon "exclamation-triangle" fixedWidth=true}} {{error}}
+      </div>
+  {{/if}}
+
+  {{#if issue}}
+      <div class="alert alert-info">
+          Created
+          <a href="{{details.url}}/issues/{{issue.id}}">
+              {{issue.tracker.name}} #{{issue.id}}: {{issue.subject}} {{fa-icon "external-link-square" class="external-icon" fixedWidth=true}}
+          </a>
+      </div>
+  {{/if}}
 {{/if}}

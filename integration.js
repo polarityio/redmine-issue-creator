@@ -107,8 +107,46 @@ function initializeData(options, cb) {
 
   async.parallel(
     {
+      customFields: (done) => {
+        getData('custom_fields', options, (err, fields) => {
+          if (err) {
+            return done(err);
+          }
+          // Currently we only support custom types on issues and the custom type must be a string
+          // (e.g., we do not support boolean or date custom types)
+          done(
+            null,
+            fields.filter((field) => field.customized_type === 'issue' && field.field_format === 'string')
+          );
+        });
+      },
       projects: (done) => {
-        getData('projects', options, done);
+        getData('projects', options, (err, projects) => {
+          const validProjectsOption = new Set(
+            options.validProjects.split(',').reduce((accum, project) => {
+              let trimmed = project.trim();
+              if (trimmed.length > 0) {
+                accum.push(trimmed);
+              }
+              return accum;
+            }, [])
+          );
+          if (err) {
+            return done(err);
+          }
+          // If the user provided a comma delimited list of valid projects, only return those projects
+          if (validProjectsOption.size > 0) {
+            projects = projects.filter((project) => validProjectsOption.has(project.name));
+          }
+
+          if (projects.length === 0) {
+            return done({
+              detail: 'No projects found.  Check your project permissions and/or the "Available Projects" option'
+            });
+          }
+
+          done(null, projects);
+        });
       },
       statuses: (done) => {
         getData('issue_statuses', options, done);
@@ -226,6 +264,7 @@ function doLookup(entities, options, cb) {
           data: {
             summary: ['Issue Creator'],
             details: {
+              url: options.url,
               properties: redmineProperties,
               defaultProjectIndex: defaultProjectIndex,
               defaultTrackerIndex: defaultTrackerIndex,
@@ -235,6 +274,8 @@ function doLookup(entities, options, cb) {
           }
         });
       });
+
+      Logger.trace({ lookupResults }, 'Lookup results');
       cb(null, lookupResults);
     }
   });
@@ -257,6 +298,7 @@ function _createIssue(options, attributes, cb) {
   Logger.debug({ requestUpdateOptions }, 'Create Issue');
   requestWithDefaults(requestUpdateOptions, 201, (err, body) => {
     if (err) {
+      Logger.error(err, 'Create Issue Error');
       return cb(err);
     }
 

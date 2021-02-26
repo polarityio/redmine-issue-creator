@@ -5,6 +5,7 @@ module.exports = {
   entityTypes: ['ipv4', 'hash', 'domain', 'email', 'url', 'ipv6', 'mac', 'IPv4CIDR'],
   onDemandOnly: true,
   logging: { level: 'info' },
+  defaultColor: 'light-purple',
   block: {
     component: {
       file: './components/redmine.js'
@@ -67,6 +68,15 @@ module.exports = {
       type: 'password',
       userCanEdit: true,
       adminOnly: false
+    },
+    {
+      key: 'validProjects',
+      name: 'Available Projects',
+      description: 'Comma delimited list of project names that are available to add issues to. Project names are case sensitive. If left blank all available projects will be listed.  The integration must be restarted after making changes to this option.  This open must be set to "Only admins can view and edit"',
+      default: '',
+      type: 'text',
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'defaultProject',
