@@ -186,6 +186,12 @@ function getData(type, options, cb) {
     uri: `${options.url}/${type}.json`
   };
 
+  if (type === 'projects') {
+    requestOptions.qs = {
+      include: 'trackers'
+    };
+  }
+
   if (options.adminApiKey.length > 0) {
     requestOptions.headers = {};
     requestOptions.headers['X-Redmine-API-Key'] = options.adminApiKey;
@@ -266,6 +272,7 @@ function doLookup(entities, options, cb) {
             details: {
               url: options.url,
               properties: redmineProperties,
+              defaultTrackerName: options.defaultTracker.trim(),
               defaultProjectIndex: defaultProjectIndex,
               defaultTrackerIndex: defaultTrackerIndex,
               defaultStatusIndex: defaultStatusIndex,

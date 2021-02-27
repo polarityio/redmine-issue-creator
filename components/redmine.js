@@ -13,6 +13,7 @@ polarity.export = PolarityComponent.extend({
   statuses: Ember.computed.alias('block.data.details.properties.statuses'),
   users: Ember.computed.alias('block.data.details.properties.users'),
   trackers: Ember.computed.alias('block.data.details.properties.trackers'),
+  defaultTrackerName: Ember.computed.alias('block.data.details.defaultTrackerName'),
   customFields: Ember.computed.alias('block.data.details.properties.customFields'),
   fieldsShadow: Ember.computed('customFields.[]', 'tracker', function () {
     const selectedTracker = this.get('tracker');
@@ -28,6 +29,17 @@ polarity.export = PolarityComponent.extend({
       }
     }
     return fields;
+  }),
+  trackersShadow: Ember.computed('project', function () {
+    const projectTrackers = this.get('project.trackers');
+    const defaultTracker = projectTrackers.find((tracker) => tracker.name === this.defaultTrackerName);
+    if (defaultTracker) {
+      this.set('tracker', defaultTracker);
+    } else if (projectTrackers.length > 0) {
+      this.set('tracker', projectTrackers[0]);
+    }
+
+    return projectTrackers;
   }),
   issue: null,
   project: null,
