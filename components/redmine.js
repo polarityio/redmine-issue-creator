@@ -63,8 +63,26 @@ polarity.export = PolarityComponent.extend({
         }
       }
 
-      if (typeof field.default_value === 'string' && field.default_value.length > 0) {
+      if (
+        field.field_format === 'string' &&
+        typeof field.default_value === 'string' &&
+        field.default_value.length > 0
+      ) {
         this.set(`customFields.${fieldIndex}.value`, field.default_value);
+      } else if (field.field_format === 'list' && field.multiple === false) {
+        const defaultValue = field.possible_values.find((item) => item.value === field.default_value);
+        if (defaultValue) {
+          this.set(`customFields.${fieldIndex}.value`, Object.assign({}, defaultValue));
+        } else {
+          this.set(`customFields.${fieldIndex}.value`, {});
+        }
+      } else if (field.field_format === 'list' && field.multiple === true) {
+        const defaultValue = field.possible_values.find((item) => item.value === field.default_value);
+        if (defaultValue) {
+          this.set(`customFields.${fieldIndex}.value`, [Object.assign({}, defaultValue)]);
+        } else {
+          this.set(`customFields.${fieldIndex}.value`, []);
+        }
       } else {
         this.set(`customFields.${fieldIndex}.value`, '');
       }
@@ -128,6 +146,12 @@ polarity.export = PolarityComponent.extend({
         if (field.is_required && typeof field.value === 'string' && field.value.trim().length === 0) {
           this.setError(field.set('validationError', `${field.name} field is a required field`));
           missingRequiredField = true;
+        } else if (field.is_required && Array.isArray(field.value) && field.value.length === 0) {
+          this.setError(field.set('validationError', `${field.name} field is a required field`));
+          missingRequiredField = true;
+        } else if (field.is_required && typeof field.value === 'object' && Object.keys(field.value).length === 0) {
+          this.setError(field.set('validationError', `${field.name} field is a required field`));
+          missingRequiredField = true;
         }
       });
 
@@ -151,10 +175,22 @@ polarity.export = PolarityComponent.extend({
         payload.custom_fields = [];
       }
       customFields.forEach((field) => {
-        payload.custom_fields.push({
-          value: field.value,
-          id: field.id
-        });
+        if (field.field_format === 'list' && field.multiple === true) {
+          payload.custom_fields.push({
+            value: field.value.map((item) => item.value),
+            id: field.id
+          });
+        } else if (field.field_format === 'list' && field.multiple === false) {
+          payload.custom_fields.push({
+            value: field.value.value,
+            id: field.id
+          });
+        } else {
+          payload.custom_fields.push({
+            value: field.value,
+            id: field.id
+          });
+        }
       });
 
       this.sendIntegrationMessage(payload)
