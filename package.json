@@ -1,10 +1,10 @@
 {
   "main": "./integration.js",
   "name": "Redmine-Issue-Creator",
-  "version": "3.2.2-beta",
+  "version": "3.3.0-beta",
   "private": true,
   "dependencies": {
-    "request": "^2.88.0",
-    "async": "^3.1.0"
+    "request": "^2.88.2",
+    "async": "^3.2.0"
   }
 }
