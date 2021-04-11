@@ -1,8 +1,8 @@
 module.exports = {
   name: 'Redmine Issue Creator',
   acronym: 'RED',
-  pdescription: 'Searches issues for supported indicators in the Redmine Project management software',
-  entityTypes: ['ipv4', 'hash', 'domain', 'email', 'url', 'ipv6', 'mac', 'IPv4CIDR'],
+  description: 'Create issues for supported indicators in the Redmine Project management software',
+  entityTypes: ['ipv4', 'hash', 'domain', 'email', 'url', 'ipv6', 'IPv4CIDR'],
   onDemandOnly: true,
   logging: { level: 'info' },
   defaultColor: 'light-purple',

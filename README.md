@@ -2,11 +2,11 @@
 
 ![mode:on demand only](https://img.shields.io/badge/mode-on%20demand%20only-blue.svg)
 
-The Polarity - Redmine Issue Creator integration lets you create new issue in Redmine from the overlay window based off an indicator on your screen.  The integration supports creating issues based off of IP addresses, hashes, urls, domains, emails and MAC addresses. To create a new issue, highlight an indicator on your screen and trigger an on-demand search.  This will open the Redmine Issue Creator integration where you will be able to install
+The Polarity - Redmine Issue Creator integration lets you create new issue in Redmine from the overlay window based off an indicator on your screen.  The integration supports creating issues based off of IP addresses, hashes, urls, domains, and emails. To create a new issue, highlight an indicator on your screen and trigger an on-demand search.  This will open the Redmine Issue Creator integration where you will be able to edit the issue to be created.
 
-The integration currently supports custom fields for issues which are of the type "text".  For custom fields, validation of the min/max length and regular expression validation are supported.  In addition, the "required" field and "default value" properties are also supported.  Custom fields are tracker dependent. 
+The integration currently supports custom fields for issues which are of the format "text" and "list".  For custom fields, validation of the min/max length and regular expression validation are supported.  In addition, the "required" field and "default value" properties are also supported.  "List" based custom fields support both single and multi select lists. Custom fields are tracker dependent. 
 
-If you make a change to a custom field in Redmine, you will need to restart the integration for those changes to be picked up.
+> If you make a change to a custom field in Redmine, you will need to restart the integration for those changes to be picked up.
 
 <img src="./images/overlay.png" width="50%">
 

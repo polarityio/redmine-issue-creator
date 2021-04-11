@@ -112,11 +112,11 @@ function initializeData(options, cb) {
           if (err) {
             return done(err);
           }
-          // Currently we only support custom types on issues and the custom type must be a string
+          // Currently we only support custom types on issues and the custom type must be a string or list
           // (e.g., we do not support boolean or date custom types)
           done(
             null,
-            fields.filter((field) => field.customized_type === 'issue' && field.field_format === 'string')
+            fields.filter((field) => field.customized_type === 'issue' && (field.field_format === 'string' || field.field_format === 'list'))
           );
         });
       },

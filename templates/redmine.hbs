@@ -59,11 +59,39 @@
           class="form-control"
           oninput={{action (pipe (action (mut field.value) value="target.value")(action "validateCustomField" field))}}
         />
-        {{#if field.validationError}}
-          <small class="form-text text-danger validation-text">
-            {{field.validationError}}
-          </small>
+      {{else if (and (eq field.field_format "list") (eq field.multiple false))}}
+        <label>{{field.name}}</label>
+        {{#if field.is_required}}
+          <span class="is-required text-muted">*required</span>
         {{/if}}
+        {{#power-select
+                options=field.possible_values
+                selected=field.value
+                searchEnabled=false
+                eventType="click"
+                allowClear=(not field.is_required)
+                onChange=(action (mut field.value)) as |field|}}
+          {{field.label}}
+        {{/power-select}}
+      {{else if (and (eq field.field_format "list") (eq field.multiple true))}}
+        <label>{{field.name}}</label>
+        {{#if field.is_required}}
+          <span class="is-required text-muted">*required</span>
+        {{/if}}
+        {{#power-select-multiple
+                options=field.possible_values
+                selected=field.value
+                searchEnabled=false
+                eventType="click"
+                closeOnSelect=false
+                onChange=(action (mut field.value)) as |field|}}
+          {{field.label}}
+        {{/power-select-multiple}}
+      {{/if}}
+      {{#if field.validationError}}
+        <small class="form-text text-danger validation-text">
+          {{field.validationError}}
+        </small>
       {{/if}}
     </div>
   {{/each}}
