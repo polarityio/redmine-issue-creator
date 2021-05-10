@@ -71,7 +71,11 @@
                 eventType="click"
                 allowClear=(not field.is_required)
                 onChange=(action (mut field.value)) as |field|}}
-          {{field.label}}
+          {{#if field.label}}
+            {{field.label}}
+          {{else}}
+            {{field.value}}
+          {{/if}}
         {{/power-select}}
       {{else if (and (eq field.field_format "list") (eq field.multiple true))}}
         <label>{{field.name}}</label>
@@ -85,7 +89,11 @@
                 eventType="click"
                 closeOnSelect=false
                 onChange=(action (mut field.value)) as |field|}}
-          {{field.label}}
+          {{#if field.label}}
+            {{field.label}}
+          {{else}}
+            {{field.value}}
+          {{/if}}
         {{/power-select-multiple}}
       {{/if}}
       {{#if field.validationError}}
