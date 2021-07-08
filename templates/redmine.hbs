@@ -59,7 +59,7 @@
           class="form-control"
           oninput={{action (pipe (action (mut field.value) value="target.value")(action "validateCustomField" field))}}
         />
-      {{else if (and (eq field.field_format "list") (eq field.multiple false))}}
+      {{else if (and (eq field.field_format "list") (or (eq field.multiple false)(not field.multiple)))}}
         <label>{{field.name}}</label>
         {{#if field.is_required}}
           <span class="is-required text-muted">*required</span>
