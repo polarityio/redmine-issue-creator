@@ -1,4 +1,5 @@
 {
+  "polarityIntegrationUuid": "d31d15c0-cce1-11ed-aeee-075d3490155d",
   "name": "Redmine Issue Creator",
   "acronym": "RED",
   "description": "Create issues for supported indicators in the Redmine Project management software",
