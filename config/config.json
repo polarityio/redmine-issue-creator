@@ -3,15 +3,7 @@
   "name": "Redmine Issue Creator",
   "acronym": "RED",
   "description": "Create issues for supported indicators in the Redmine Project management software",
-  "entityTypes": [
-    "IPv4",
-    "hash",
-    "domain",
-    "email",
-    "url",
-    "IPv6",
-    "IPv4CIDR"
-  ],
+  "entityTypes": ["IPv4", "MD5", "SHA1", "SHA256", "domain", "email", "url", "IPv6", "IPv4CIDR"],
   "onDemandOnly": true,
   "logging": {
     "level": "info"
@@ -25,16 +17,7 @@
       "file": "./templates/redmine.hbs"
     }
   },
-  "styles": [
-    "./styles/redmine.less"
-  ],
-  "request": {
-    "cert": "",
-    "key": "",
-    "passphrase": "",
-    "ca": "",
-    "proxy": ""
-  },
+  "styles": ["./styles/redmine.less"],
   "options": [
     {
       "key": "url",

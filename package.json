@@ -1,10 +1,10 @@
 {
   "name": "Redmine-Issue-Creator",
-  "version": "3.3.6",
+  "version": "3.3.7",
   "main": "./integration.js",
   "private": true,
   "dependencies": {
-    "postman-request": "^2.88.1-postman.31",
-    "async": "^3.2.0"
+    "postman-request": "^2.88.1-postman.40",
+    "async": "^3.2.5"
   }
 }
